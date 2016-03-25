@@ -1,5 +1,7 @@
 require 'benchmark'
 
+# reference implemenration based on permutations
+# it's a good instrument for checking results of optimized implementation
 def reference_calculate(n, m)
   ms = [1,2,3,4,5,6].repeated_permutation(n).map do |attempt|
     attempt.reduce(:+)
@@ -24,54 +26,49 @@ def optimized_calculate(n, m)
   Rational(variants) / Rational(6 ** n)
 end
 
-def process_input
-  n = ARGV[0].to_i
-  m = ARGV[1].to_i
-  puts "Calculate N = #{n} M = #{m}"
-  bm = Benchmark.measure do
-    puts "Result = #{reference_calculate(n, m)}"
-  end
-  puts bm
-end
-
 def build_check_table(n)
   min_m = 1
   max_m = 6 * n
-  (min_m..max_m).each do |m|
-    puts "N = #{n} M = #{m} Result = #{reference_calculate(n, m)}"
+  (min_m..max_m).map do |m|
+    ref_result = reference_calculate(n, m)
+    calc_result = optimized_calculate(n, m)
+    if ref_result == calc_result
+      [true, { n: n, m: m, result: calc_result }]
+    else
+      [false, { n: n, m: m, result: calc_result, expected_result: ref_result }]
+    end
   end
 end
 
-def run_test_case(n, m, expected_result)
-  result = reference_calculate(n, m)
-  if result == expected_result
-    puts "OK: N = #{n} M = #{m} Result = #{result}"
+def report_check_results(table)
+  table.each do |(status, report)|
+    if status
+      puts "OK: N = #{report[:n]}, M = #{report[:m]}, Result = #{report[:result]}"
+    else
+      puts "FAIL: N = #{report[:n]}, M = #{report[:m]}, Result = #{report[:result]}, Expected result = #{report[:expected_result]}"
+    end
+  end
+end
+
+def run_test_cases
+  report_check_results(build_check_table(1))
+  report_check_results(build_check_table(2))
+  report_check_results(build_check_table(3))
+end
+
+def main
+  if ARGV[0] && ARGV[1]
+    n = ARGV[0].to_i
+    m = ARGV[1].to_i
+    puts "Calculate N = #{n}, M = #{m}"
+    bm = Benchmark.measure do
+      result = optimized_calculate(n, m)
+      puts "Result = #{result}"
+    end
+    puts "Measurement = #{bm}"
   else
-    puts "FAIL: N = #{n} M = #{m} Result = #{result} Expected = #{expected_result}"
+    run_test_cases
   end
 end
 
-# run_test_case(1, 1, Rational(1) / Rational(6))
-# run_test_case(1, 2, Rational(1) / Rational(6))
-# run_test_case(1, 3, Rational(1) / Rational(6))
-# run_test_case(1, 4, Rational(1) / Rational(6))
-# run_test_case(1, 5, Rational(1) / Rational(6))
-# run_test_case(1, 6, Rational(1) / Rational(6))
-#
-# run_test_case(2, 1, Rational(0))
-# run_test_case(2, 2, Rational(1) / Rational(36))
-# run_test_case(2, 3, Rational(2) / Rational(36))
-# run_test_case(2, 4, Rational(3) / Rational(36))
-# run_test_case(2, 5, Rational(4) / Rational(36))
-# run_test_case(2, 6, Rational(5) / Rational(36))
-# run_test_case(2, 7, Rational(6) / Rational(36))
-# run_test_case(2, 8, Rational(5) / Rational(36))
-# run_test_case(2, 9, Rational(4) / Rational(36))
-# run_test_case(2, 10, Rational(3) / Rational(36))
-# run_test_case(2, 11, Rational(2) / Rational(36))
-# run_test_case(2, 12, Rational(1) / Rational(36))
-
-build_check_table(1)
-
-build_check_table(3)
-# process_input
+main
