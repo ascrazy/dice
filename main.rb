@@ -19,7 +19,7 @@ end
 def optimized_calculate(n, m)
   return 0 if m < n || m > 6 * n
   compositions = (0..n).map do |i|
-    (-1)**i * C_n_k(i, n) * C_n_k(n - 1, m - n * (1 - 1) + i * (1 - 6 - 1) - 1)
+    (-1)**i * C_n_k(i, n) * C_n_k(n - 1, m - 6 * i - 1)
   end.reduce(:+)
   Rational(compositions) / Rational(6**n)
 end
