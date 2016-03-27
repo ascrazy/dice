@@ -1,0 +1,12 @@
+OK: N = 2, M = 1, Result = 0/36
+OK: N = 2, M = 2, Result = 1/36
+OK: N = 2, M = 3, Result = 2/36
+OK: N = 2, M = 4, Result = 3/36
+OK: N = 2, M = 5, Result = 4/36
+OK: N = 2, M = 6, Result = 5/36
+OK: N = 2, M = 7, Result = 6/36
+OK: N = 2, M = 8, Result = 5/36
+OK: N = 2, M = 9, Result = 4/36
+OK: N = 2, M = 10, Result = 3/36
+OK: N = 2, M = 11, Result = 2/36
+OK: N = 2, M = 12, Result = 1/36
